@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <title>Connect4 Game</title>
+    <title>Data Update</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            setInterval(function () {
+                $.get("/data", function (board) {
+                    // $("#data").text(data.key);
+                    for (let i = 0; i < 6; i++) {
+                        for (let j = 0; j < 7; j++) {
+                            $(`#${i}-${j}`).text(board[i][j])
+                        }
+                    }
+                });
+            }, 1000);  // Fetch data every second
+        });
+        $(document).ready(function () {
+            $(".cell").click(function () {
+                // var id = $(this).attr('id');
+                var id = $(this).find("p").attr('id');
+                $.post("/move", { 'id': id }, function (data) {
+                    // Handle the server response here
+                });
+            });
+        });
+    </script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(7, 60px);
+            gap: 10px;
+        }
+
+        .cell {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #000;
+            text-align: center;
+            line-height: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="grid">
+        {% for row in range(6) %}
+            {% for col in range(7) %}
+                <div class="cell"><p id="{{row}}-{{col}}" class="in"> </p></div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+    <p id="data"></p>
+    <button onclick="$.post('/clear')">Limpar</button>
+</body>
+
+</html>
