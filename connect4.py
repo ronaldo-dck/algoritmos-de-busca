@@ -61,8 +61,7 @@ class ConnectFour:
                     column = int(input(f"Player {self.current_player}, choose a column (1-7): ")) - 1
                 else:
                     column = AprofundamentoIterativo(self.board).busca()
-        
-                # column = int(input(f"Player {self.current_player}, choose a column (1-7): ")) - 1
+
 
                 if 0 <= column <= 6:
                     if self.make_move(column):
@@ -77,10 +76,6 @@ class ConnectFour:
                     print("Invalid column. Please choose a number between 1 and 7.")
             except ValueError:
                 print("Invalid input. Please enter a number.")
-
-
-
-
 
 
 
