@@ -2,13 +2,21 @@ from AprofundamentoInterativo import AprofundamentoIterativo
 
 class ConnectFour:
     def __init__(self):
-        self.board = [[' ' for _ in range(7)] for _ in range(6)]
+        # self.board = [[' ' for _ in range(7)] for _ in range(6)]
+        self.board = [
+    [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    [' ', ' ', 'O', ' ', ' ', ' ', ' '],
+    [' ', ' ', 'O', ' ', ' ', ' ', ' '],
+    [' ', ' ', 'O', 'X', ' ', ' ', ' '],
+    ['O', 'O', 'X', 'X', 'X', ' ', 'X'],
+]
         self.current_player = 'X'
 
     def print_board(self):
         for row in self.board:
-            print('|'.join(row))
-            print('-' * 29)
+            print(row)
+        print("_" * 54)
 
     def make_move(self, column):
         for i in range(5, -1, -1):
