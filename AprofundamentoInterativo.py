@@ -159,18 +159,20 @@ class AprofundamentoIterativo:
         print(np.array(caminho))
 
         if caminho is not None:
-            origin = np.array(caminho[0])
             if strategy == 'vence':
+                origin = np.array(caminho[0])
                 moved = np.array(caminho[1])
             else:
+                origin = np.array(caminho[-2])
                 moved = np.array(caminho[-1])
             posicao_diferenca = np.where(origin != moved)
             if len(posicao_diferenca[0]) > 0:
                 pos = tuple(zip(posicao_diferenca[0], posicao_diferenca[1]))
-                print(pos)
-                if strategy == 'vence':
-                    return pos[0][1]
-                return pos[-1][1]
+                print(pos) # o bug aqui acontecia pq não tinha como garantir q a ordem das alterações fosse detectada tal qual elas aconteceram cronologicamente, então podia ser que o movimento da vitória do oponente não estivesse na última posição. Agr tá garantido que entre origin e moved existe apenas uma jogada de diferença, portanto essa variação do index do pos abaixo não é mais relevante
+                # if strategy == 'vence':
+                #     return pos[0][1]
+                # return pos[-1][1]
+                return pos[0][1]
             else:
                 return None
 
@@ -238,11 +240,11 @@ example_board = [
 ]
 
 # problem = [[' ' ' ' ' ' ' ' ' ' ' ' ' ']
-#         [' ' ' ' 'X' ' ' ' ' ' ' ' ']
-#         [' ' ' ' 'O' ' ' ' ' ' ' ' ']
-#         [' ' ' ' 'O' ' ' ' ' ' ' ' ']
-#         [' ' ' ' 'O' 'X' ' ' ' ' ' ']
-#         ['O' 'O' 'X' 'X' 'X' ' ' 'X']]
+            # [' ' ' ' 'X' ' ' ' ' ' ' ' ']
+            # [' ' ' ' 'O' ' ' ' ' ' ' ' ']
+            # [' ' ' ' 'O' 'X' ' ' ' ' ' ']
+            # [' ' ' ' 'O' 'X' ' ' ' ' ' ']
+            # ['O' 'O' 'X' 'X' 'X' 'O' 'X']
 
 
 # ap = AprofundamentoIterativo(example_board)
