@@ -7,8 +7,6 @@ class Objetivo:
 
     def steps_to_win(self, board: np.ndarray, goal, debug=False):
         # Check horizontal
-
-        debug = False
         for row in board:
             if f'{goal}{goal}{goal}{goal}' in ''.join(row):
                 return 0  # + minhaVez  # Já venceu na horizontal

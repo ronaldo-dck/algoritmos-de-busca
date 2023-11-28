@@ -4,8 +4,12 @@ from collections import deque
 import numpy as np
 from FunctionObjetivo import Objetivo
 import json
+from Encripita import decodificar, codificar
 
-PROFUNDIDADE = 6
+
+PROFUNDIDADE = 5
+
+
 class AprofundamentoIterativo:
 
     def __init__(self, board) -> None:
@@ -28,12 +32,13 @@ class AprofundamentoIterativo:
             for row in board:
                 print(row)
             print("_" * 54)
-      
-    def setaNodo(self, nodo, profundidade, debug = False):
+
+    def setaNodo(self, nodo, profundidade, debug=False):
 
         nodo.stepsPlayer = Objetivo().steps_to_win(nodo.board, self.__player, debug)
-        nodo.stepsOpponent = Objetivo().steps_to_win(nodo.board, self.__adversario, debug)
-        nodo.player = (self.__adversario if profundidade % 2 else self.__player) if PROFUNDIDADE % 2 == 0 else (self.__adversario if profundidade % 2 == 0 else self.__player)
+        nodo.stepsOpponent = Objetivo().steps_to_win( nodo.board, self.__adversario, debug)
+        nodo.player = (self.__adversario if profundidade % 2 else self.__player) if PROFUNDIDADE % 2 == 0 else (
+            self.__adversario if profundidade % 2 == 0 else self.__player)
         return nodo
 
     # def geraGrafo(self, root, profundidade=PROFUNDIDADE):
@@ -61,7 +66,8 @@ class AprofundamentoIterativo:
             return
 
         for n in range(7):
-            aux = Node(root.board.copy())
+            aux = Node(
+                deepcopy(root.board))
             for i in range(5, -1, -1):
                 if aux.board[i][n] == ' ':
                     aux.board[i][n] = (
@@ -77,18 +83,6 @@ class AprofundamentoIterativo:
 
                     root.add_child(aux)
 
-                    # Salvando o nó em um arquivo JSON
-                    json_data = {
-                        "board": aux.board.tolist(),
-                        "player": aux.player,
-                        "stepsPlayer": aux.stepsPlayer,
-                        "stepsOpponent": aux.stepsOpponent
-                    }
-
-                    with open(f"boards/node_{file_counter}.json", "a") as json_file:
-                        json.dump(json_data, json_file, indent=2)
-
-                    file_counter += 1
                     break
 
     def busca(self):
@@ -97,7 +91,6 @@ class AprofundamentoIterativo:
         """
 
         strategy = self.strategy_decision(self.root)
-
 
         self.root.print_node()
         caminho = self.IDDFS(self.root, self.__player, PROFUNDIDADE+1)
@@ -113,10 +106,11 @@ class AprofundamentoIterativo:
             posicao_diferenca = np.where(origin != moved)
             if len(posicao_diferenca[0]) > 0:
                 pos = tuple(zip(posicao_diferenca[0], posicao_diferenca[1]))
-                print(pos) # o bug aqui acontecia pq não tinha como garantir q a
-                #ordem das alterações fosse detectada tal qual elas aconteceram cronologicamente, 
-                # então podia ser que o movimento da vitória do oponente não estivesse na última posição. 
-                # Agr tá garantido que entre origin e moved existe apenas uma jogada de diferença, 
+                print(pos)
+                # o bug aqui acontecia pq não tinha como garantir q a
+                # ordem das alterações fosse detectada tal qual elas aconteceram cronologicamente,
+                # então podia ser que o movimento da vitória do oponente não estivesse na última posição.
+                # Agr tá garantido que entre origin e moved existe apenas uma jogada de diferença,
                 # portanto essa variação do index do pos abaixo não é mais relevante
                 # if strategy == 'vence':
                 #     return pos[0][1]
@@ -145,11 +139,11 @@ class AprofundamentoIterativo:
             # Substitua 'X' pelo seu objetivo
             strategy = self.strategy_decision(root)
             print('estrategia', strategy)
-            result = self.DLS(root, goal=_goal, depth=depth, path=path, strategy=strategy)
+            result = self.DLS(root, goal=_goal, depth=depth,
+                              path=path, strategy=strategy)
             if result is not None:
                 return result
         return None
-
 
     def DLS(self, node, goal, depth, path, strategy):
         path.append(node.board)
@@ -164,35 +158,22 @@ class AprofundamentoIterativo:
         return None
 
 
+# example_board = [
+#     [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+#     [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+#     [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+#     [' ', 'X', ' ', ' ', ' ', 'X', ' '],
+#     [' ', 'O', 'X', 'O', 'X', 'X', ' '],
+#     ['X', 'O', 'O', 'X', 'O', 'O', 'O'],
+# ]
 
 
-
-
-example_board = [
-    [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', 'X', ' ', ' ', ' ', 'X', ' '],
-    [' ', 'O', 'X', 'O', 'X', 'X', ' '],
-    ['X', 'O', 'O', 'X', 'O', 'O', 'O'],
+problem = [[' ', ' ', ' ', ' ', ' ', ' ', ' '],
+[' ', ' ', 'X', ' ', ' ', ' ', ' '],
+[' ', ' ', 'O', ' ', ' ', ' ', ' '],
+[' ', ' ', 'O', 'X', ' ', ' ', ' '],
+[' ', ' ', 'O', 'X', ' ', ' ', ' '],
+['O', 'O', 'X', 'X', 'X', 'O', 'X']
 ]
 
-
-example_board = [
-    [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', 'O', ' ', ' ', ' ', ' '],
-    [' ', ' ', 'O', ' ', ' ', ' ', ' '],
-    [' ', ' ', 'O', ' ', ' ', ' ', ' '],
-    [' ', ' ', 'X', 'X', ' ', ' ', ' '],
-]
-
-# problem = [[' ' ' ' ' ' ' ' ' ' ' ' ' ']
-            # [' ' ' ' 'X' ' ' ' ' ' ' ' ']
-            # [' ' ' ' 'O' ' ' ' ' ' ' ' ']
-            # [' ' ' ' 'O' 'X' ' ' ' ' ' ']
-            # [' ' ' ' 'O' 'X' ' ' ' ' ' ']
-            # ['O' 'O' 'X' 'X' 'X' 'O' 'X']
-
-
-# ap = AprofundamentoIterativo(example_board)
+ap = AprofundamentoIterativo(problem).busca()
