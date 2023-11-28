@@ -1,16 +1,19 @@
 from AprofundamentoInterativo import AprofundamentoIterativo
+import numpy as np
+
 
 class ConnectFour:
     def __init__(self):
         # self.board = [[' ' for _ in range(7)] for _ in range(6)]
-        self.board = [
-    [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', 'X', ' ', ' ', ' ', ' '],
-    [' ', ' ', 'O', ' ', ' ', ' ', ' '],
-    [' ', ' ', 'O', ' ', ' ', ' ', ' '],
-    [' ', ' ', 'O', 'X', ' ', ' ', ' '],
-    ['O', 'O', 'X', 'X', 'X', 'O', 'X'],
-]
+        self.board = np.full((6, 7), ' ', dtype='str')
+        # self.board = np.array([
+        #     [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+        #     [' ', ' ', 'X', ' ', ' ', ' ', ' '],
+        #     [' ', ' ', 'O', ' ', ' ', ' ', ' '],
+        #     [' ', ' ', 'O', ' ', ' ', ' ', ' '],
+        #     [' ', ' ', 'O', 'X', ' ', ' ', ' '],
+        #     ['O', 'O', 'X', 'X', 'X', 'O', 'X'],
+        # ])
         self.current_player = 'X'
 
     def print_board(self):
@@ -66,10 +69,10 @@ class ConnectFour:
             try:
 
                 if self.current_player == 'X':
-                    column = int(input(f"Player {self.current_player}, choose a column (1-7): ")) - 1
+                    column = int(
+                        input(f"Player {self.current_player}, choose a column (1-7): ")) - 1
                 else:
                     column = AprofundamentoIterativo(self.board).busca()
-
 
                 if 0 <= column <= 6:
                     if self.make_move(column):
@@ -84,7 +87,6 @@ class ConnectFour:
                     print("Invalid column. Please choose a number between 1 and 7.")
             except ValueError:
                 print("Invalid input. Please enter a number.")
-
 
 
 def main():
