@@ -28,3 +28,8 @@ def decodificar(codigo_x, codigo_o):
                     matriz[i][j] = 'O'
 
         return matriz
+
+
+
+
+

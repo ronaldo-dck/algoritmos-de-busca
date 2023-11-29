@@ -16,8 +16,10 @@ class AprofundamentoIterativo:
         self.__board = board
         self.__player = ''
         self.__adversario = ''
+        self.bestSolution = float('inf')
+        self.worstSolution = float('inf')
         self.playerAtual()
-        self.root = self.setaNodo(Node(board), PROFUNDIDADE, True)
+        self.root = self.setaNodo(Node(board), PROFUNDIDADE, False)
         self.geraGrafo(self.root, PROFUNDIDADE)
 
     def playerAtual(self):
@@ -35,31 +37,14 @@ class AprofundamentoIterativo:
 
     def setaNodo(self, nodo, profundidade, debug=False):
 
-        nodo.stepsPlayer = Objetivo().steps_to_win(nodo.board, self.__player, debug)
-        nodo.stepsOpponent = Objetivo().steps_to_win( nodo.board, self.__adversario, debug)
         nodo.player = (self.__adversario if profundidade % 2 else self.__player) if PROFUNDIDADE % 2 == 0 else (
             self.__adversario if profundidade % 2 == 0 else self.__player)
+        nodo.stepsPlayer = Objetivo().steps_to_win(nodo.board, self.__player, debug) + (1 if nodo.player == 'O' else 0)
+        self.bestSolution = min(self.bestSolution, nodo.stepsPlayer)
+        nodo.stepsOpponent = Objetivo().steps_to_win( nodo.board, self.__adversario, debug) + (1 if nodo.player == 'X' else 0)
+        self.worstSolution = min(self.worstSolution, nodo.stepsOpponent)
         return nodo
 
-    # def geraGrafo(self, root, profundidade=PROFUNDIDADE):
-
-    #     if profundidade == 0:
-    #         return
-
-    #     for n in range(7):
-    #         aux = Node(deepcopy(root.board))
-    #         for i in range(5, -1, -1):
-    #             if aux.board[i][n] == ' ':
-
-    #                 aux.board[i][n] = (self.__adversario if profundidade % 2 else self.__player) if PROFUNDIDADE % 2 == 0 else (self.__adversario if profundidade % 2 == 0 else self.__player)
-
-    #                 self.setaNodo(aux, profundidade)
-
-    #                 if aux.stepsPlayer > 0 or aux.stepsOpponent > 0:
-    #                     self.geraGrafo(aux, profundidade - 1)
-
-    #                 root.add_child(aux)
-    #                 break
 
     def geraGrafo(self, root, profundidade=PROFUNDIDADE, file_counter=1):
         if profundidade == 0:
@@ -92,7 +77,6 @@ class AprofundamentoIterativo:
 
         strategy = self.strategy_decision(self.root)
 
-        self.root.print_node()
         caminho = self.IDDFS(self.root, self.__player, PROFUNDIDADE+1)
 
 
@@ -106,15 +90,6 @@ class AprofundamentoIterativo:
             posicao_diferenca = np.where(origin != moved)
             if len(posicao_diferenca[0]) > 0:
                 pos = tuple(zip(posicao_diferenca[0], posicao_diferenca[1]))
-                print(pos)
-                # o bug aqui acontecia pq não tinha como garantir q a
-                # ordem das alterações fosse detectada tal qual elas aconteceram cronologicamente,
-                # então podia ser que o movimento da vitória do oponente não estivesse na última posição.
-                # Agr tá garantido que entre origin e moved existe apenas uma jogada de diferença,
-                # portanto essa variação do index do pos abaixo não é mais relevante
-                # if strategy == 'vence':
-                #     return pos[0][1]
-                # return pos[-1][1]
                 return pos[0][1]
             else:
                 return None
@@ -123,12 +98,11 @@ class AprofundamentoIterativo:
         my_steps_to_win = node.stepsPlayer
         opponent_steps_to_win = node.stepsOpponent
 
-        # node.print_node()
         if my_steps_to_win == 0:
             return 'vence'  # Já estou prestes a vencer
         elif opponent_steps_to_win == 0:
             return 'impede'  # Adversá rio está prestes a vencer, preciso impedir
-        elif my_steps_to_win <= opponent_steps_to_win:
+        elif my_steps_to_win <= opponent_steps_to_win or opponent_steps_to_win > 2:
             return 'vence'  # Estou mais próximo da vitória
         else:
             return 'impede'  # Adversário está mais próximo da vitória, preciso impedir
@@ -138,7 +112,6 @@ class AprofundamentoIterativo:
             path = []
             # Substitua 'X' pelo seu objetivo
             strategy = self.strategy_decision(root)
-            print('estrategia', strategy)
             result = self.DLS(root, goal=_goal, depth=depth,
                               path=path, strategy=strategy)
             if result is not None:
@@ -147,7 +120,7 @@ class AprofundamentoIterativo:
 
     def DLS(self, node, goal, depth, path, strategy):
         path.append(node.board)
-        if ((strategy == 'vence' and node.stepsPlayer == 0) or (strategy == 'impede' and node.stepsOpponent == 0)):
+        if ((strategy == 'vence' and node.stepsPlayer == self.bestSolution) or (strategy == 'impede' and node.stepsOpponent == self.worstSolution)):
             return path
         elif depth > 0:
             for child in node.children:
@@ -168,12 +141,12 @@ class AprofundamentoIterativo:
 # ]
 
 
-problem = [[' ', ' ', ' ', ' ', ' ', ' ', ' '],
-[' ', ' ', 'X', ' ', ' ', ' ', ' '],
-[' ', ' ', 'O', ' ', ' ', ' ', ' '],
-[' ', ' ', 'O', 'X', ' ', ' ', ' '],
-[' ', ' ', 'O', 'X', ' ', ' ', ' '],
-['O', 'O', 'X', 'X', 'X', 'O', 'X']
-]
+# problem = [[' ', ' ', ' ', ' ', ' ', ' ', ' '],
+# [' ', ' ', 'X', ' ', ' ', ' ', ' '],
+# [' ', ' ', 'O', ' ', ' ', ' ', ' '],
+# [' ', ' ', 'O', 'X', ' ', ' ', ' '],
+# [' ', ' ', 'O', 'X', ' ', ' ', ' '],
+# ['O', 'O', 'X', 'X', 'X', 'O', 'X']
+# ]
 
-ap = AprofundamentoIterativo(problem).busca()
+# ap = AprofundamentoIterativo(problem).busca()

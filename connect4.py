@@ -1,19 +1,19 @@
-from AprofundamentoInterativo import AprofundamentoIterativo
+from AprofundamentoIterativo import AprofundamentoIterativo
 import numpy as np
 
 
 class ConnectFour:
     def __init__(self):
         # self.board = [[' ' for _ in range(7)] for _ in range(6)]
-        # self.board = np.full((6, 7), ' ', dtype='str')
-        self.board = np.array(
-            [[' ', ' ', ' ', ' ', ' ', ' ', ' '],
-[' ', ' ', 'X', ' ', ' ', ' ', ' '],
-[' ', ' ', 'O', ' ', ' ', ' ', ' '],
-[' ', ' ', 'O', ' ', ' ', ' ', ' '],
-[' ', ' ', 'O', 'X', ' ', ' ', ' '],
-['O', 'O', 'X', 'X', 'X', 'O', 'X']
-])
+        self.board = np.full((6, 7), ' ', dtype='str')
+        # self.board = np.array(
+        #     [[' ', ' ', ' ', ' ', ' ', ' ', ' '],
+        #     [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+        #     [' ', ' ', ' ', 'O', 'O', 'X', ' '],
+        #     [' ', ' ', ' ', 'O', 'X', 'X', ' '],
+        #     [' ', 'O', 'X', 'X', 'X', 'O', ' '],
+        #     ['O', 'O', 'O', 'X', 'X', 'X', 'O']
+        #     ])
         self.current_player = 'X'
 
     def print_board(self):
