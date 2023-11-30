@@ -1,178 +1,79 @@
-import math
+import networkx as nx
 
+def criar_tabuleiro_vazio():
+    return [[0] * 7 for _ in range(6)]
 
-class ConnectFourAI:
-    def __init__(self, max_depth=3):
-        self.max_depth = max_depth
+def copiar_tabuleiro(tabuleiro):
+    return [row[:] for row in tabuleiro]
 
-    def evaluate_board(self, board, player):
-        # Função de avaliação simples para o Connect Four
-        score = 0
-        opponent = 'O' if player == 'X' else 'X'
+def imprimir_tabuleiro(tabuleiro):
+    for row in tabuleiro:
+        print(row)
+    print()
 
-        for row in board:
-            for i in range(4):
-                window = row[i:i+4]
-                score += self.evaluate_window(window, player, opponent)
+def realizar_jogada(tabuleiro, coluna, jogador):
+    for i in range(5, -1, -1):
+        if tabuleiro[i][coluna] == 0:
+            tabuleiro[i][coluna] = jogador
+            return tabuleiro
 
-        for col in range(7):
-            for i in range(3):
-                window = [board[i+k][col] for k in range(4)]
-                score += self.evaluate_window(window, player, opponent)
-
-        for i in range(3):
-            for j in range(4):
-                window = [board[i+k][j+k] for k in range(4)]
-                score += self.evaluate_window(window, player, opponent)
-
-                window = [board[i+k][j+3-k] for k in range(4)]
-                score += self.evaluate_window(window, player, opponent)
-
-        return score
-
-    def evaluate_window(self, window, player, opponent):
-        score = 0
-        if window.count(player) == 4:
-            score += 100
-        elif window.count(player) == 3 and window.count(' ') == 1:
-            score += 5
-        elif window.count(player) == 2 and window.count(' ') == 2:
-            score += 2
-
-        if window.count(opponent) == 3 and window.count(' ') == 1:
-            score -= 4
-
-        return score
-
-    def is_terminal_node(self, board):
-        return self.check_winner(board, 'X') or self.check_winner(board, 'O') or not any(' ' in row for row in board)
-
-    def check_winner(self, board, player):
-        for row in board:
-            if ''.join(row).count(player * 4) > 0:
+def verificar_vitoria(tabuleiro, jogador):
+    # Verifica se há uma vitória na horizontal, vertical ou diagonal
+    for i in range(6):
+        for j in range(4):
+            # Verifica na horizontal
+            if tabuleiro[i][j] == tabuleiro[i][j+1] == tabuleiro[i][j+2] == tabuleiro[i][j+3] == jogador:
                 return True
-
-        for col in range(7):
-            column = ''.join([board[row][col] for row in range(6)])
-            if column.count(player * 4) > 0:
+            # Verifica na vertical
+            if tabuleiro[j][i] == tabuleiro[j+1][i] == tabuleiro[j+2][i] == tabuleiro[j+3][i] == jogador:
                 return True
+    # Verifica nas diagonais
+    for i in range(3):
+        for j in range(4):
+            if tabuleiro[i][j] == tabuleiro[i+1][j+1] == tabuleiro[i+2][j+2] == tabuleiro[i+3][j+3] == jogador:
+                return True
+            if tabuleiro[i][j+3] == tabuleiro[i+1][j+2] == tabuleiro[i+2][j+1] == tabuleiro[i+3][j] == jogador:
+                return True
+    return False
 
-        for i in range(3):
-            for j in range(4):
-                if ''.join([board[i+k][j+k] for k in range(4)]).count(player * 4) > 0:
-                    return True
+def calcular_movimentos_minimos(tabuleiro):
+    # Neste exemplo, uma heurística simples é utilizada
+    # Conta o número de peças no tabuleiro
+    return sum(row.count(1) + row.count(2) for row in tabuleiro)
 
-                if ''.join([board[i+k][j+3-k] for k in range(4)]).count(player * 4) > 0:
-                    return True
+def gerar_grafo_profundidade_limitada(tabuleiro_inicial, profundidade):
+    G = nx.Graph()
 
-        return False
+    def dfs(tabuleiro, atual_profundidade, jogador):
+        if atual_profundidade == 0:
+            return
 
-    def minimax(self, board, depth, maximizing_player, alpha, beta):
-        valid_moves = [col for col in range(7) if any(
-            row[col] == ' ' for row in board)]
+        for coluna in range(7):
+            novo_tabuleiro = copiar_tabuleiro(tabuleiro)
+            novo_tabuleiro = realizar_jogada(novo_tabuleiro, coluna, jogador)
+            
+            # Avalia a quantidade mínima de movimentos usando a heurística
+            movimentos_minimos = calcular_movimentos_minimos(novo_tabuleiro)
 
-        if depth == 0 or self.is_terminal_node(board):
-            return None, self.evaluate_board(board, 'X')
+            G.add_edge(str(tabuleiro), str(novo_tabuleiro), weight=movimentos_minimos)
+            dfs(novo_tabuleiro, atual_profundidade - 1, 3 - jogador)  # Alterna entre jogadores
 
-        if maximizing_player:
-            max_eval = -math.inf
-            best_move = None
+    G.add_node(str(tabuleiro_inicial))
+    dfs(tabuleiro_inicial, profundidade, 1)
 
-            for col in valid_moves:
-                row = self.get_next_open_row(board, col)
-                temp_board = [row[:] for row in board]
-                temp_board[row][col] = 'X'
+    return G
 
-                _, eval_score = self.minimax(
-                    temp_board, depth - 1, False, alpha, beta)
-                if eval_score > max_eval:
-                    max_eval = eval_score
-                    best_move = col
+# Exemplo de uso:
+tabuleiro_inicial = criar_tabuleiro_vazio()
+profundidade_limite = 6
+grafo = gerar_grafo_profundidade_limitada(tabuleiro_inicial, profundidade_limite)
 
-                alpha = max(alpha, eval_score)
-                if beta <= alpha:
-                    break
+# Exibe informações sobre o grafo gerado
+print("Número de nós:", grafo.number_of_nodes())
+print("Número de arestas:", grafo.number_of_edges())
 
-            return best_move, max_eval
-        else:
-            min_eval = math.inf
-            best_move = None
-
-            for col in valid_moves:
-                row = self.get_next_open_row(board, col)
-                temp_board = [row[:] for row in board]
-                temp_board[row][col] = 'O'
-
-                _, eval_score = self.minimax(
-                    temp_board, depth - 1, True, alpha, beta)
-                if eval_score < min_eval:
-                    min_eval = eval_score
-                    best_move = col
-
-                beta = min(beta, eval_score)
-                if beta <= alpha:
-                    break
-
-            return best_move, min_eval
-
-    def get_next_open_row(self, board, col):
-        for r in range(5, -1, -1):
-            if board[r][col] == ' ':
-                return r
-        return None
-
-    def get_best_move(self, board):
-        best_move, _ = self.minimax(
-            board, self.max_depth, True, -math.inf, math.inf)
-        return best_move
-
-
-def print_board(board):
-    for row in board:
-        print('|'.join(row))
-        print('-' * 29)
-
-
-if __name__ == "__main__":
-    game_board = [[' ' for _ in range(7)] for _ in range(6)]
-    ai = ConnectFourAI(max_depth=3)
-
-    while True:
-        print_board(game_board)
-
-        try:
-            player_move = int(input("Enter your move (1-7): ")) - 1
-            if 0 <= player_move <= 6 and any(row[player_move] == ' ' for row in game_board):
-                player_row = ai.get_next_open_row(game_board, player_move)
-                game_board[player_row][player_move] = 'X'
-            else:
-                print("Invalid move. Please try again.")
-                continue
-        except ValueError:
-            print("Invalid input. Please enter a number.")
-            continue
-
-        if ai.check_winner(game_board, 'X'):
-            print_board(game_board)
-            print("You win!")
-            break
-
-        if all(all(cell != ' ' for cell in row) for row in game_board):
-            print_board(game_board)
-            print("It's a draw!")
-            break
-
-        print("AI is thinking...")
-        ai_move = ai.get_best_move(game_board)
-        ai_row = ai.get_next_open_row(game_board, ai_move)
-        game_board[ai_row][ai_move] = 'O'
-
-        if ai.check_winner(game_board, 'O'):
-            print_board(game_board)
-            print("AI wins!")
-            break
-
-        if all(all(cell != ' ' for cell in row) for row in game_board):
-            print_board(game_board)
-            print("It's a draw!")
-            break
+# Para visualizar o grafo, você pode usar ferramentas como o Graphviz
+# por exemplo, você pode exportar o grafo para um arquivo DOT e visualizá-lo usando Graphviz
+# nx.write_dot(grafo, "connect4_graph.dot")
+# Certifique-se de ter o Graphviz instalado e execute o seguinte comando no terminal:
+# dot -Tpng connect4_graph.dot -o connect4_graph.png

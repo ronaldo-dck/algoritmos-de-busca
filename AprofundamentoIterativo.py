@@ -7,7 +7,7 @@ import json
 from Encripita import decodificar, codificar
 
 
-PROFUNDIDADE = 5
+PROFUNDIDADE = 6
 
 
 class AprofundamentoIterativo:
@@ -72,12 +72,15 @@ class AprofundamentoIterativo:
 
     def busca(self):
         """
-        Realiza a busca na arvore de possibilidades e retorna baseadao no estratégia
+        Realiza a busca na arvore de possibilidades e retorna baseado na estratégia
         """
 
         strategy = self.strategy_decision(self.root)
 
         caminho = self.IDDFS(self.root, self.__player, PROFUNDIDADE+1)
+
+        for move in caminho:
+            print(move)
 
 
         if caminho is not None:
@@ -97,11 +100,11 @@ class AprofundamentoIterativo:
     def strategy_decision(self, node):
         my_steps_to_win = node.stepsPlayer
         opponent_steps_to_win = node.stepsOpponent
-
+        node.print_node()
         if my_steps_to_win == 0:
             return 'vence'  # Já estou prestes a vencer
         elif opponent_steps_to_win == 0:
-            return 'impede'  # Adversá rio está prestes a vencer, preciso impedir
+            return 'impede'  # Adversário está prestes a vencer, preciso impedir
         elif my_steps_to_win <= opponent_steps_to_win or opponent_steps_to_win > 2:
             return 'vence'  # Estou mais próximo da vitória
         else:
