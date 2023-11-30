@@ -1,10 +1,14 @@
 class Node:
-    def __init__(self, board):
+    def __init__(self, board, parent = None):
+        self.parent = parent
         self.children = []
         self.board = board
-        self.player = ' '
+        self.proxPlayer = ' '
         self.stepsPlayer = float('inf')
         self.stepsOpponent = float('inf')
+
+    def __lt__(self, other):
+        return self.stepsPlayer < other.stepsPlayer
 
     def add_child(self, node):
         self.children.append(node)
@@ -13,7 +17,7 @@ class Node:
         print("Board:")
         for row in self.board:
             print(row)
-        print(f"Player: {self.player}")
+        print(f"ProxPlayer: {self.proxPlayer}")
         print(f"Steps to Player's Victory: {self.stepsPlayer}")
         print(f"Steps to Opponent's Victory: {self.stepsOpponent}")
         print("Children:")
