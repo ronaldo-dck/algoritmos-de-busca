@@ -3,17 +3,8 @@ import numpy as np
 
 
 class ConnectFour:
-    def __init__(self):
-        # self.board = [[' ' for _ in range(7)] for _ in range(6)]
-        self.board = np.full((6, 7), ' ', dtype='str')
-        # self.board = np.array(
-        #     [[' ', ' ', ' ', ' ', ' ', ' ', ' '],
-        #     [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-        #     [' ', ' ', ' ', 'O', 'O', 'X', ' '],
-        #     [' ', ' ', ' ', 'O', 'X', 'X', ' '],
-        #     [' ', 'O', 'X', 'X', 'X', 'O', ' '],
-        #     ['O', 'O', 'O', 'X', 'X', 'X', 'O']
-        #     ])
+    def __init__(self, board):
+        self.board = board
         self.current_player = 'X'
 
     def print_board(self):
@@ -90,7 +81,17 @@ class ConnectFour:
 
 
 def main():
-    game = ConnectFour()
+    # self.board = [[' ' for _ in range(7)] for _ in range(6)]
+    board = np.full((6, 7), ' ', dtype='str')
+    # self.board = np.array(
+    #     [[' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    #     [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    #     [' ', ' ', ' ', 'O', 'O', 'X', ' '],
+    #     [' ', ' ', ' ', 'O', 'X', 'X', ' '],
+    #     [' ', 'O', 'X', 'X', 'X', 'O', ' '],
+    #     ['O', 'O', 'O', 'X', 'X', 'X', 'O']
+    #     ])
+    game = ConnectFour(board)
     game.play_game()
 
 
