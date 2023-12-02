@@ -2,7 +2,7 @@ import numpy as np
 
 
 class Objetivo:
-    def __init__(self) -> None:
+    def __init__(self):
         pass
 
     def steps_to_win(self, board: np.ndarray, goal, debug=False):
@@ -85,14 +85,15 @@ class Objetivo:
 
         return min_distance
 
+    def strategy_decision(self, node):
+        my_steps_to_win = node.stepsPlayer
+        opponent_steps_to_win = node.stepsOpponent
 
-
-# problem = [[' ', ' ', ' ', ' ', ' ', ' ', ' '],
-#         [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-#         ['X', ' ', ' ', ' ', ' ', ' ', ' '],
-#         ['O', ' ', ' ', ' ', 'O', 'X', ' '],
-#         ['O', ' ', 'O', 'X', 'X', 'O', ' '],
-#         ['O', ' ', 'O', 'X', 'X', 'X', ' ']
-#         ]
-
-# obj = Objetivo().steps_to_win(problem, 'X', True)
+        if my_steps_to_win == 0:
+            return 'vence'  # Já estou prestes a vencer
+        elif opponent_steps_to_win == 0:
+            return 'impede'  # Adversário está prestes a vencer, preciso impedir
+        elif my_steps_to_win <= opponent_steps_to_win or opponent_steps_to_win > 4:
+            return 'vence'  # Estou mais próximo da vitória
+        else:
+            return 'impede'  # Adversário está mais próximo da vitória, preciso impedir

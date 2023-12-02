@@ -1,4 +1,5 @@
 from AprofundamentoIterativo import AprofundamentoIterativo
+from astar import Astar
 import numpy as np
 
 
@@ -60,10 +61,10 @@ class ConnectFour:
             try:
 
                 if self.current_player == 'X':
-                    column = AprofundamentoIterativo(self.board).astar()#int(input(f"Player {self.current_player}, choose a column (1-7): ")) - 1
+                    column = AprofundamentoIterativo(self.board).busca()#int(input(f"Player {self.current_player}, choose a column (1-7): ")) - 1
                 else:
                     # column = AprofundamentoIterativo(self.board).busca()
-                    column = AprofundamentoIterativo(self.board).busca()
+                    column = Astar(self.board).astar()
 
                 if 0 <= column <= 6:
                     if self.make_move(column):
