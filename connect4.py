@@ -54,17 +54,30 @@ class ConnectFour:
     def switch_player(self):
         self.current_player = 'O' if self.current_player == 'X' else 'X'
 
-    def play_game(self):
+    def play_game(self, player1, player2):
         while True:
             self.print_board()
 
             try:
 
                 if self.current_player == 'X':
-                    column = AprofundamentoIterativo(self.board).busca()#int(input(f"Player {self.current_player}, choose a column (1-7): ")) - 1
+                    # column = Astar(self.board).astar()
+                    column = AprofundamentoIterativo(self.board).busca()
+                    # if player1 == 'I':
+                    #     column = AprofundamentoIterativo(self.board).busca()
+                    # elif player1 == 'A':
+                    #     column = Astar(self.board).astar()
+                    # else:
+                    #     column = int(input(f"Player {self.current_player}, choose a column (1-7): ")) - 1
                 else:
-                    # column = AprofundamentoIterativo(self.board).busca()
                     column = Astar(self.board).astar()
+                    # column = AprofundamentoIterativo(self.board).busca()
+                    # if player2 == 'I':
+                    #     column = AprofundamentoIterativo(self.board).busca()
+                    # elif player2 == 'A':
+                    #     column = Astar(self.board).astar()
+                    # else:
+                    #     column = int(input(f"Player {self.current_player}, choose a column (1-7): ")) - 1
 
                 if 0 <= column <= 6:
                     if self.make_move(column):
@@ -82,18 +95,12 @@ class ConnectFour:
 
 
 def main():
-    # self.board = [[' ' for _ in range(7)] for _ in range(6)]
     board = np.full((6, 7), ' ', dtype='str')
-    # self.board = np.array(
-    #     [[' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    #     [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    #     [' ', ' ', ' ', 'O', 'O', 'X', ' '],
-    #     [' ', ' ', ' ', 'O', 'X', 'X', ' '],
-    #     [' ', 'O', 'X', 'X', 'X', 'O', ' '],
-    #     ['O', 'O', 'O', 'X', 'X', 'X', 'O']
-    #     ])
     game = ConnectFour(board)
-    game.play_game()
+    player1, player2 = '', ''
+    # input(f'Primeiro jogador: (A/I/H):{player1}')
+    # input(f'Segundo jogador: (A/I/H):{player2}')
+    game.play_game(player1=player1, player2=player2)
 
 
 if __name__ == '__main__':

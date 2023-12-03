@@ -1,9 +1,9 @@
 from Grafo import Node
 import numpy as np
 from FunctionObjetivo import Objetivo
+import hp
 
-
-PROFUNDIDADE = 5
+PROFUNDIDADE = hp.PROFUNDIDADE
 
 class GeradorGrafo:
 
