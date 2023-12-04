@@ -5,14 +5,11 @@ class Objetivo:
     def __init__(self):
         pass
 
-    def steps_to_win(self, board: np.ndarray, goal, debug=False):
-        
-        # Calcular a menor distância até a vitória
+    def steps_to_win(self, board: np.ndarray, goal):
         min_distance = float('inf')
         empty_count = 0
         goal_count = 0 
 
-        # # Check horizontal
         for i, row in enumerate(board):
             for groups in range(0, 4):
                 goal_count = 0
@@ -29,9 +26,7 @@ class Objetivo:
                         if cell == ' ':
                             empty_count += 1
                 min_distance = min(min_distance, 4 - goal_count + empty_count)
-        #     # if debug: print('linha ', min_distance)
 
-        # # Check vertical
         for col in range(7):
             column = ''.join(board[row][col] for row in range(6))
             for groups in range(0, 3):
@@ -44,9 +39,7 @@ class Objetivo:
                         break
 
                 min_distance = min(min_distance, 4 - goal_count)
-        #     # if debug: print('coluna ', min_distance, goal)
 
-        # Check diagonals
         for i in range(3):
             for j in range(4):
                 goal_count = 0
@@ -64,7 +57,6 @@ class Objetivo:
                             empty_count += 1
 
                 min_distance = min(min_distance, 4 - goal_count + empty_count)
-                # if debug: print('diagonal 1', min_distance)
 
         for i in range(3):
             for j in range(3, 7):
@@ -81,7 +73,6 @@ class Objetivo:
                         if cell == ' ':
                             empty_count += 1
                 min_distance = min(min_distance, 4 - goal_count + empty_count)
-                # if debug: print('diagonal 2', min_distance)
 
         return min_distance
 
@@ -94,6 +85,6 @@ class Objetivo:
         elif opponent_steps_to_win == 0:
             return 'impede'  # Adversário está prestes a vencer, preciso impedir
         elif my_steps_to_win <= opponent_steps_to_win or opponent_steps_to_win > 4:
-            return 'vence'  # Estou mais próximo da vitória
+            return 'vence'  # Estou mais próximo da vitória ou oponente mto longe
         else:
             return 'impede'  # Adversário está mais próximo da vitória, preciso impedir

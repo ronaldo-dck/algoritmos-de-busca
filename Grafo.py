@@ -17,9 +17,9 @@ class Node:
         print("Board:")
         for row in self.board:
             print(row)
-        print(f"ProxPlayer: {self.proxPlayer}")
-        print(f"Steps to Player's Victory: {self.stepsPlayer}")
-        print(f"Steps to Opponent's Victory: {self.stepsOpponent}")
+        print(f"ProxJogador: {self.proxPlayer}")
+        print(f"Turnos para vitoria do jogador: {self.stepsPlayer}")
+        print(f"Turnos para vitoria do oponente: {self.stepsOpponent}")
         print("Children:")
         print("----")
         input()

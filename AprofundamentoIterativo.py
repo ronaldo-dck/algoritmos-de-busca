@@ -26,24 +26,22 @@ class AprofundamentoIterativo:
                              self.G.getPlayer(), PROFUNDIDADE+1)
         print('IT Acessos: ', self.AccessCount)
 
-        # for node in caminho:
-        #     node.print_node()
-
         if caminho is not None:
-            if strategy == 'vence':
+            if len(caminho) > 1:
                 origin = np.array(caminho[-2].board)
                 moved = np.array(caminho[-1].board)
+                posicao_diferenca = np.where(origin != moved)
+                if len(posicao_diferenca[0]) > 0:
+                    pos = tuple(zip(posicao_diferenca[0], posicao_diferenca[1]))
+                    time_fim = time.time()
+                    print("busca iterativa ",time_fim-time_inicio)
+                    return pos[0][1]
+                else:
+                    return None
             else:
-                origin = np.array(caminho[-2].board)
-                moved = np.array(caminho[-1].board)
-            posicao_diferenca = np.where(origin != moved)
-            if len(posicao_diferenca[0]) > 0:
-                pos = tuple(zip(posicao_diferenca[0], posicao_diferenca[1]))
-                time_fim = time.time()
-                print("busca iterativa ",time_fim-time_inicio)
-                return pos[0][1]
-            else:
-                return None
+                for i in range(7):
+                    if caminho[0].board[0][i] == ' ':
+                        return i
 
     def IDDFS(self, root, strategy, _goal, max_depth):
         print('it', strategy)

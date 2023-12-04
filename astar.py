@@ -15,7 +15,6 @@ class Astar:
         self.AccessCount = 0
 
     def heuristic(self,node, strategy):
-        # Heurística: contar o número de sequências vitoriosas para o jogador atual
         player_wins = 1/node.stepsPlayer if node.stepsPlayer != 0 else float('inf')
         opponent_wins = 1/node.stepsOpponent if node.stepsOpponent != 0 else float('inf')
         return player_wins - opponent_wins if strategy == 'vence' else opponent_wins - player_wins
@@ -30,23 +29,17 @@ class Astar:
             _, current_node = heapq.heappop(open_set)
             self.AccessCount += 1
 
-            # if current_node.stepsPlayer == best_solution:
             if ((strategy == 'vence' and current_node.stepsPlayer == best_solution) or (strategy == 'impede' and current_node.stepsOpponent == worst_solution)):
                 objetivo = current_node
                 break
-                # return current_node  # Encontrou um estado de vitória
 
-            # closed_set.add(tuple(current_node.board))  # Adiciona o estado atual ao conjunto fechado
-            closed_set.add(map(tuple, current_node.board))  # Adiciona o estado atual ao conjunto fechado
+            closed_set.add(map(tuple, current_node.board))
 
             for child in current_node.children:
-                # if tuple(child.board.tolist) not in closed_set:
                 if map(tuple, child.board) not in closed_set:
                     heapq.heappush(open_set, (self.heuristic(child, strategy), child))
 
         return self.get_path(objetivo)
-
-        # return None  # Nenhum estado de vitória encontrado
 
     def astar(self):
         time_inicio = time.time()
@@ -54,16 +47,21 @@ class Astar:
         caminho = self.a_star(self.root, self.bestSolution, self.worstSolution, strategy)
         print('A* acessos: ', self.AccessCount)
 
-        origin = np.array(caminho[-2].board)
-        moved = np.array(caminho[-1].board)
-        posicao_diferenca = np.where(origin != moved)
-        if len(posicao_diferenca[0]) > 0:
-            pos = tuple(zip(posicao_diferenca[0], posicao_diferenca[1]))
-            time_fim = time.time()
-            print("Astar ", time_fim-time_inicio)
-            return pos[0][1]
+        if len(caminho) > 1:
+            origin = np.array(caminho[-2].board)
+            moved = np.array(caminho[-1].board)
+            posicao_diferenca = np.where(origin != moved)
+            if len(posicao_diferenca[0]) > 0:
+                pos = tuple(zip(posicao_diferenca[0], posicao_diferenca[1]))
+                time_fim = time.time()
+                print("Astar ", time_fim-time_inicio)
+                return pos[0][1]
+            else:
+                return None
         else:
-            return None
+            for i in range(7):
+                if caminho[0].board[0][i] == ' ':
+                    return i
 
     def get_path(self,node):
         path = []
